@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eluquent\SoftDeletes;
 
 return new class extends Migration
 {
@@ -12,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('post_attaches', function (Blueprint $table) {
             $table->id();
-            $table->string('caption', 255);
-            $table->foreignId('user_id')->constrained('users');
+            $table->string('storage_path', 255);
+            $table->foreignId('post_id')->constrained('posts');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('post_attaches');
     }
 };
