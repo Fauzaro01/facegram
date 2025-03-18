@@ -13,7 +13,8 @@ class PostController extends Controller
     public function store(Request $req) {
         $validated = $req->validate([
             'caption' => 'required',
-            'attachments' => 'required|mimes:png,jpeg,webp,jpg,gif|max:20000',
+            'attachments' => 'required',
+            'attachments.*' => 'required|mimes:png,jpeg,webp,jpg,gif|max:20000',
         ]);
 
         $post = Post::create([
@@ -22,19 +23,18 @@ class PostController extends Controller
         ]);
 
         if($req->hasFile('attachments')) {
-            $gambarPath = Str::random(20) . '.' . $req->file('attachments')->getClientOriginalExtension(); 
-            $gambarFiles = $req->file('attachments')->storeAs('public/gambar', $gambarPath);
-
-            PostAttach::create([
-                'storage_path' => $gambarFiles,
-                'post_id' => $post->id
-            ]);
-        } else {
-            $gambarPath = null;
+            foreach($validated['attachments'] as $gambar) {
+                $path = $gambar->store('gambar', 'public');
+                
+                PostAttach::create([
+                    'storage_path' => $path,
+                    'post_id' => $post->id
+                ]);
+            }
         }
 
         return response()->json([
-            'message' => 'Create post success'
+            'message' => 'Create post success',
         ], 201);
         
     }

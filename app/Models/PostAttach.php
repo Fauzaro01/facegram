@@ -10,4 +10,8 @@ class PostAttach extends Model
         'storage_path',
         'post_id'
     ];
+
+    public function post() {
+        return $this->belongsTo(Post::class);
+    }
 }
