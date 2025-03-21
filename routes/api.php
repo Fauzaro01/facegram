@@ -12,6 +12,13 @@ Route::get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function() {
 
+    Route::get('/', function() {
+        return response()->json([
+            'message' => "Succes bos",
+            'code' => 200
+        ], 200);
+    });
+
     // AUTH routes
     Route::prefix('/auth')->controller(AuthController::class)->group(function() {
         Route::get('/', 'index')->name('auth.index');
@@ -28,7 +35,7 @@ Route::prefix('v1')->group(function() {
 
     Route::prefix('users')->controller(FollowController::class)->middleware('auth:sanctum')->group(function() {
         Route::get('/', 'getUnFollowerUser')->name('users.index');
-        Route::post('/{username}', 'getDetailUser')->name('users.userspesific');
+        Route::get('/{username}', 'getDetailUser')->name('users.userspesific');
         Route::post('/{username}/follow', 'followUser')->name('users.follow');
         Route::post('/{username}/unfollow', 'unFollowUser')->name('users.follow');
         Route::put('/{username}/accept', 'acceptUser')->name('users.accept');

@@ -63,7 +63,7 @@ class PostController extends Controller
         return response()->json([
             'page' => $req->query('page'),
             'size' => $req->query('size'),
-            'posts' => Post::paginate($req->query('size')),
+            'posts' => Post::with(['user', 'attachments'])->paginate($req->query('size')),
         ]);
     }
 

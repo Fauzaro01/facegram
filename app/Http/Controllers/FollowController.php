@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Follow;
+use App\Models\Post;
 use App\Models\User;
 
 class FollowController extends Controller
@@ -236,7 +237,7 @@ class FollowController extends Controller
         $posts = [];
         if (!$user->is_private || $followingStatus == 'following' || $isYourAccount) {
             $posts = Post::where('user_id', $user->id)
-                        ->with('attachments:id,storage_path')
+                        ->with('attachments')
                         ->get(['id', 'caption', 'created_at', 'deleted_at'])
                         ->map(function ($post) {
                             return [
