@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('post_attaches', function (Blueprint $table) {
             $table->id();
             $table->string('storage_path', 255);
-            $table->foreignId('post_id')->constrained('posts');
+            $table->foreignId('post_id')->constrained('posts')->onDelete('cascade');
             $table->timestamps();
         });
     }

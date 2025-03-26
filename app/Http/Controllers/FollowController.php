@@ -11,29 +11,18 @@ use App\Models\User;
 class FollowController extends Controller
 {
     public function index(Request $req) {
-        $following = Follow::where('follower_id', $req->user()->id)
-                       ->with('following:id,full_name,username,bio,is_private,created_at')
-                       ->get()
-                       ->map(function ($follow) {
-                           return [
-                               "id" => $follow->following->id,
-                               "full_name" => $follow->following->full_name,
-                               "username" => $follow->following->username,
-                               "bio" => $follow->following->bio,
-                               "is_private" => $follow->following->is_private,
-                               "created_at" => $follow->following->created_at,
-                               "is_requested" => !$follow->is_accepted
-                           ];
-                       });
+        $authUserId = $req->user()->id;
 
-        if ($following->isEmpty()) {
-            return response()->json([
-                'message' => 'User no Found'
-            ], 404);
-        }
+        $users = User::whereNotIn('id', function ($query) use ($authUserId) {
+                        $query->select('following_id')
+                            ->from('follows')
+                            ->where('follower_id', $authUserId);
+                    })
+                    ->where('id', '!=', $authUserId)
+                    ->get(['id', 'full_name', 'username', 'bio', 'is_private', 'created_at', 'updated_at']);
 
         return response()->json([
-            'following' => $following,
+            "users" => $users
         ], 200);
     }
 
